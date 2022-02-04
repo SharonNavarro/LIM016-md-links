@@ -1,6 +1,3 @@
-// module.exports = () => {
-//   // ...
-// };
 console.log("hola mundo");
 
 function add (a, b) {
