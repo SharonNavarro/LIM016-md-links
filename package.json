@@ -20,6 +20,9 @@
   },
   "homepage": "https://github.com/SharonNavarro/LIM016-md-links#readme",
   "devDependencies": {
-    "eslint": "^8.8.0"
-  }
+    "eslint": "^8.8.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4"
+  },
+  "type": "commonjs"
 }

@@ -1,10 +1,7 @@
+const math = require('./main');
+
+console.log(math);
+console.log(math.add(2, 3));
 // module.exports = () => {
 //   // ...
 // };
-console.log("hola mundo");
-
-function add (a, b) {
-  return a + b;
-}
-
-console.log(add(2,3))
