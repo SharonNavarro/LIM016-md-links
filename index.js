@@ -1,7 +1,7 @@
-const math = require('./main');
+// const math = require('./main');
 
-console.log(math);
-console.log(math.add(2, 3));
-// module.exports = () => {
-//   // ...
-// };
+// console.log(math);
+// console.log(math.add(2, 3));
+// // module.exports = () => {
+// //   // ...
+// // };

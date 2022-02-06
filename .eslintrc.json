@@ -11,6 +11,11 @@
         "ecmaVersion": "latest"
     },
     "rules": {
-        "linebreak-style":"off"
+        "linebreak-style":"off",
+        "no-shadow": "off",
+        "max-len":"off",
+        "no-trailing-spaces":"off",
+        "spaced-comment":"off",
+        "no-console":"off"
     }
 }
