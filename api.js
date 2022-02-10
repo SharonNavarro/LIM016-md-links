@@ -6,7 +6,7 @@ const process = require('process');
 
 const marked = require('marked');
 
-// const renderer = new marked.Renderer();
+const cheerio = require('cheerio');
 
 const route = process.argv[2];
 
@@ -57,15 +57,21 @@ console.log('array: ', onlyMd);
 // Funcion para leer un archivo y mostrarlo en la consola
 // // const readFiles = (route) => fs.readFileSync(route, 'utf8');
 
-const convertToHtml = () => {
-  const x = [];
-  let b;
+const toHtmlAndExtractLinks = () => {
+  const linksArray = [];
   onlyMd.forEach((elm) => {
     const readFiles = fs.readFileSync(elm, 'utf8');
-    b = marked.parse(readFiles);
-    x.push(b);
+    const fileToHtml = marked.parse(readFiles);
+    const $ = cheerio.load(fileToHtml);
+    const onlyHref = $('a');
+    const lengthHref = onlyHref.length;
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < lengthHref; i++) {
+      linksArray.push(onlyHref[i].attribs.href);
+    }
   });
-  return x;
+  console.log('array de links: ', linksArray);
+  return linksArray;
 };
 
-console.log(convertToHtml(), 'aqui');
+toHtmlAndExtractLinks();
