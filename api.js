@@ -2,49 +2,70 @@ const fs = require('fs');
 
 const path = require('path');
 
-const exit = require('process');
+const process = require('process');
 
-const ruta = process.argv[2];
+const marked = require('marked');
 
-const existeRuta = (x) => fs.existsSync(x); 
+// const renderer = new marked.Renderer();
 
-if (existeRuta(ruta)) {
-  console.log('El archivo existe');
+const route = process.argv[2];
+
+const routeExists = (x) => fs.existsSync(x); 
+
+if (routeExists(route)) {
+  console.log('La ruta existe');
 } else {
-  console.log('El archivo no existe');
-  exit();
+  console.log('La ruta no existe');
+  process.exit(0);
 }
 
-console.log(path.extname(ruta).substring(1));
+const isAbsolutePath = (x) => path.isAbsolute(x);
+
+const absolutePath = (routeParameter) => {
+  let pathAlreadyAbsolute;
+  if (isAbsolutePath(routeParameter) === false) {
+    pathAlreadyAbsolute = path.resolve(routeParameter);
+    console.log('se convirtio en absoluta: ', pathAlreadyAbsolute);
+  }
+  return pathAlreadyAbsolute;
+};
+
+console.log(absolutePath(route));
+
+const arr = [];
+let pathChildren = '';
+let onlyMd = [];
+
+const recursiveFunction = (route) => {
+  if (fs.lstatSync(route).isFile()) {
+    arr.push(route);
+  } else {
+    fs.readdirSync(route).map((file) => {
+      pathChildren = path.resolve(route, file);
+      return fs.lstatSync(pathChildren).isDirectory()
+        ? recursiveFunction(pathChildren)
+        : arr.push(pathChildren);
+    });
+  }
+  onlyMd = arr.filter((el) => path.extname(el).substring(1) === 'md');
+  return onlyMd;
+};
+
+recursiveFunction(route);
+console.log('array: ', onlyMd);
 
 // Funcion para leer un archivo y mostrarlo en la consola
-fs.readFile(ruta, 'utf8', (err) => {
-  if (err) throw err;
-  console.log('OK: ', (ruta));
-//   console.log(data)
-});
+// // const readFiles = (route) => fs.readFileSync(route, 'utf8');
 
-const esRutaAbsoluta = (ruta) => path.isAbsolute(ruta);
-
-// Convierte la ruta en absoluta
-const rutaAbsoluta = (ruta) => {
-  let x;
-  if (esRutaAbsoluta(ruta) === false) {
-    x = path.resolve(ruta);
-    console.log('se convirtio en absoluta: ', x);
-  }
+const convertToHtml = () => {
+  const x = [];
+  let b;
+  onlyMd.forEach((elm) => {
+    const readFiles = fs.readFileSync(elm, 'utf8');
+    b = marked.parse(readFiles);
+    x.push(b);
+  });
   return x;
 };
 
-console.log(rutaAbsoluta(ruta));
-
-const traverseSync = (ruta) => ({
-  path: ruta,
-  children: fs.readdirSync(ruta).map((file) => {
-    const Path = path.join(ruta, file);
-    return fs.lstatSync(Path).isDirectory()
-      ? traverseSync(path)
-      : { path };
-  }),
-});
-console.log(traverseSync(ruta));
+console.log(convertToHtml(), 'aqui');

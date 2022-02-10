@@ -1,0 +1,1 @@
+// Archivo javascript de prueba

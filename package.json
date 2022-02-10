@@ -26,5 +26,8 @@
     "eslint-plugin-import": "^2.25.4",
     "http-server": "^14.1.0"
   },
-  "type": "commonjs"
+  "type": "commonjs",
+  "dependencies": {
+    "marked": "^4.0.12"
+  }
 }
