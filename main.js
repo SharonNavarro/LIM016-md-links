@@ -1,10 +1,19 @@
+// const process = require('process');
+
+// const mdLinks = require('./api');
+
+// const route = process.argv[2];
+
+// if (routeExists(route)) {
+//   console.log('La ruta existe');
+// } else {
+//   console.log('La ruta no existe');
+//   process.exit(0);
+// }
+
 // const fs = require('fs');
 
 // const http = require('http');
-
-// http.createServer((req, res) => {
-//   res.write('<h1>Hola Mundo</h1>');
-// }).listen(3000);
 
 // fs.readFile('./README.md', (err, data) => {
 //   if (err) {
@@ -33,5 +42,24 @@
 
 // module.exports = Math;
 // exports.add = add;
-//Es la ruta  un directorio?
-// const rutaDirectorio = (ruta) => fs.statSync(ruta).isDirectory();    // preguntamos si la ruta es un directorio
+
+const obj = {
+  name: 'Holly',
+  edad: 35,
+  papel: 'productor',
+};
+  
+const convertObjectToList = (obj) => {
+  const claves = Object.keys(obj);
+  const arr = claves.map((elm) => {
+    const keyAndValue = [];
+    keyAndValue.push(elm);
+    const x = obj[elm];
+    keyAndValue.push(x);
+    return keyAndValue;
+  });
+  console.log(arr);
+  return arr;
+};
+
+convertObjectToList(obj);

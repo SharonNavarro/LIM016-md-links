@@ -6,7 +6,13 @@ const process = require('process');
 
 const marked = require('marked');
 
-const cheerio = require('cheerio');
+// const cheerio = require('cheerio');
+
+const jsdom = require('jsdom');
+
+const { JSDOM } = jsdom;
+
+// const fetch = require('node-fetch');
 
 const route = process.argv[2];
 
@@ -30,7 +36,7 @@ const absolutePath = (routeParameter) => {
   return pathAlreadyAbsolute;
 };
 
-console.log(absolutePath(route));
+absolutePath(route);
 
 const arr = [];
 let pathChildren = '';
@@ -57,21 +63,76 @@ console.log('array: ', onlyMd);
 // Funcion para leer un archivo y mostrarlo en la consola
 // // const readFiles = (route) => fs.readFileSync(route, 'utf8');
 
+// const toHtmlAndExtractLinks = () => {
+//   const linksArray = [];
+//   onlyMd.forEach((elm) => {
+//     const readFiles = fs.readFileSync(elm, 'utf8');
+//     const fileToHtml = marked.parse(readFiles);
+//     const $ = cheerio.load(fileToHtml);
+//     const onlyHref = $('a');
+//     const lengthHref = onlyHref.length;
+//     // eslint-disable-next-line no-plusplus
+//     for (let i = 0; i < lengthHref; i++) {
+//       linksArray.push({
+//         href: onlyHref[i].attribs.href,
+//         kk: onlyHref[i].children[0],
+//         text: onlyHref[i].children[0].data,
+//         file: elm,
+//       });
+//     }
+//   });
+//   console.log('array de links: ', linksArray);
+//   return linksArray;
+// };
+
 const toHtmlAndExtractLinks = () => {
-  const linksArray = [];
+  const arrDom = [];
   onlyMd.forEach((elm) => {
     const readFiles = fs.readFileSync(elm, 'utf8');
     const fileToHtml = marked.parse(readFiles);
-    const $ = cheerio.load(fileToHtml);
-    const onlyHref = $('a');
-    const lengthHref = onlyHref.length;
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < lengthHref; i++) {
-      linksArray.push(onlyHref[i].attribs.href);
-    }
+    const dom = new JSDOM(fileToHtml).window.document.querySelectorAll('a');
+    dom.forEach((el) => {
+      if (el.href.slice(0, 5) === 'https') {
+        arrDom.push({
+          href: el.href,
+          text: (el.textContent).slice(0, 50),
+          file: elm,
+        });
+      }
+    });
   });
-  console.log('array de links: ', linksArray);
-  return linksArray;
+  console.log(arrDom.flat(1));
 };
 
 toHtmlAndExtractLinks();
+
+// const validarLinksStatus = (links) => {
+//   let myPromises = links.map((elem) => new Promise( (resolve) => {   //Iteramos los link con promesa
+//     return fetch(elem.href)                                    //Hacemos una peticion al link y devuelve una promesa
+//           .then((response) => {                                    
+//             if (response.status >= 200 && response.status <= 299){  //Si la respuesta tiene un status entre 200 y 299
+//                   elem.status = response.status,                     //me da la respuesta con el status
+//                   elem.ok = "OK";                                     // Te devuelve ok
+//                   resolve(elem);                                     //resuelve la promesa
+//               } else {
+//                   elem.status = response.status,
+//                   elem.ok = 'FAIL';
+//                   resolve(elem);
+//               }
+//           })
+//           .catch((err) => {                                          //Si la promesa fallo
+//               elem.status = err.status,
+//         elem.ok = 'FAIL';
+//         resolve(elem);
+//       });  
+//   }));
+//   return Promise.all(myPromises)
+// //   .then((res) => {
+//       //console.log(res);
+//       return res;
+//     })
+//     .catch((err)=>{
+//       //console.log(err);
+//       return err;
+//     });
+// };
