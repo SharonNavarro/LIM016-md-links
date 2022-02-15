@@ -14,6 +14,8 @@ const { JSDOM } = jsdom;
 
 // const fetch = require('node-fetch');
 
+const axios = require('axios');
+
 const route = process.argv[2];
 
 const routeExists = (x) => fs.existsSync(x); 
@@ -58,32 +60,6 @@ const recursiveFunction = (route) => {
 };
 
 recursiveFunction(route);
-console.log('array: ', onlyMd);
-
-// Funcion para leer un archivo y mostrarlo en la consola
-// // const readFiles = (route) => fs.readFileSync(route, 'utf8');
-
-// const toHtmlAndExtractLinks = () => {
-//   const linksArray = [];
-//   onlyMd.forEach((elm) => {
-//     const readFiles = fs.readFileSync(elm, 'utf8');
-//     const fileToHtml = marked.parse(readFiles);
-//     const $ = cheerio.load(fileToHtml);
-//     const onlyHref = $('a');
-//     const lengthHref = onlyHref.length;
-//     // eslint-disable-next-line no-plusplus
-//     for (let i = 0; i < lengthHref; i++) {
-//       linksArray.push({
-//         href: onlyHref[i].attribs.href,
-//         kk: onlyHref[i].children[0],
-//         text: onlyHref[i].children[0].data,
-//         file: elm,
-//       });
-//     }
-//   });
-//   console.log('array de links: ', linksArray);
-//   return linksArray;
-// };
 
 const toHtmlAndExtractLinks = () => {
   const arrDom = [];
@@ -101,10 +77,27 @@ const toHtmlAndExtractLinks = () => {
       }
     });
   });
-  console.log(arrDom.flat(1));
+  return arrDom.flat(1);
 };
 
-toHtmlAndExtractLinks();
+console.log(toHtmlAndExtractLinks());
+
+const linkStatus = () => {
+  toHtmlAndExtractLinks().forEach((el) => {
+    console.log(el.href);
+    axios.get(el.href)
+      .then((response) => {
+        console.log(response.status);
+        console.log(response.statusText);
+      })
+      .catch((error) => {
+        console.log('status: ', error.toJSON().status);
+        console.log('code: ', error.toJSON().code);
+      });
+  });
+};
+
+linkStatus();
 
 // const validarLinksStatus = (links) => {
 //   let myPromises = links.map((elem) => new Promise( (resolve) => {   //Iteramos los link con promesa
