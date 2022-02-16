@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-param-reassign */
 const fs = require('fs');
 
 const path = require('path');
@@ -18,7 +20,19 @@ const axios = require('axios');
 
 const route = process.argv[2];
 
-const routeExists = (x) => fs.existsSync(x); 
+const routeExists = (routeParameter) => fs.existsSync(routeParameter); 
+
+const absolutePath = (routeParameter) => (path.isAbsolute(routeParameter) ? routeParameter : path.resolve(routeParameter));
+
+const routeDirectory = (parameter) => fs.lstatSync(parameter).isDirectory();
+
+const routeFile = (routeParameter) => fs.lstatSync(routeParameter).isFile();
+
+const readDirectory = (routeParameter) => fs.readdirSync(routeParameter);
+
+const readExtName = (parameter) => path.extname(parameter);
+
+const convertToAbsolute = (routeParameter, file) => path.resolve(routeParameter, file);
 
 if (routeExists(route)) {
   console.log('La ruta existe');
@@ -27,43 +41,32 @@ if (routeExists(route)) {
   process.exit(0);
 }
 
-const isAbsolutePath = (x) => path.isAbsolute(x);
-
-const absolutePath = (routeParameter) => {
-  let pathAlreadyAbsolute;
-  if (isAbsolutePath(routeParameter) === false) {
-    pathAlreadyAbsolute = path.resolve(routeParameter);
-    console.log('se convirtio en absoluta: ', pathAlreadyAbsolute);
-  }
-  return pathAlreadyAbsolute;
-};
-
 absolutePath(route);
 
-const arr = [];
-let pathChildren = '';
-let onlyMd = [];
-
-const recursiveFunction = (route) => {
-  if (fs.lstatSync(route).isFile()) {
-    arr.push(route);
-  } else {
-    fs.readdirSync(route).map((file) => {
-      pathChildren = path.resolve(route, file);
-      return fs.lstatSync(pathChildren).isDirectory()
-        ? recursiveFunction(pathChildren)
-        : arr.push(pathChildren);
-    });
-  }
-  onlyMd = arr.filter((el) => path.extname(el).substring(1) === 'md');
+const recursiveFunction = (routeParameter) => {
+  const arr = [];
+  let pathChildren = '';
+  let onlyMd = [];
+  const startingPoint = (routeParameter) => {
+    if (routeFile(routeParameter)) {
+      arr.push(routeParameter);
+    } else {
+      readDirectory(routeParameter).map((file) => {
+        pathChildren = convertToAbsolute(routeParameter, file);
+        return routeDirectory(pathChildren)
+          ? startingPoint(pathChildren)
+          : arr.push(pathChildren);
+      });
+    }
+    onlyMd = arr.filter((el) => readExtName(el).substring(1) === 'md');
+  };
+  startingPoint(routeParameter);
   return onlyMd;
 };
 
-recursiveFunction(route);
-
-const toHtmlAndExtractLinks = () => {
+const toHtmlAndExtractLinks = (routeParameter) => {
   const arrDom = [];
-  onlyMd.forEach((elm) => {
+  recursiveFunction(routeParameter).forEach((elm) => {
     const readFiles = fs.readFileSync(elm, 'utf8');
     const fileToHtml = marked.parse(readFiles);
     const dom = new JSDOM(fileToHtml).window.document.querySelectorAll('a');
@@ -80,52 +83,34 @@ const toHtmlAndExtractLinks = () => {
   return arrDom.flat(1);
 };
 
-console.log(toHtmlAndExtractLinks());
-
-const linkStatus = () => {
-  toHtmlAndExtractLinks().forEach((el) => {
-    console.log(el.href);
+const linkStatus = (arrLinks) => {
+  console.log(arrLinks);
+  const linksStatus = arrLinks.map((el) => new Promise((resolve) => {
     axios.get(el.href)
       .then((response) => {
-        console.log(response.status);
-        console.log(response.statusText);
+        const { status } = response;
+        el.status = status;
+        el.message = 'ok';
+        resolve(el);
       })
       .catch((error) => {
-        console.log('status: ', error.toJSON().status);
-        console.log('code: ', error.toJSON().code);
+        const { status } = error.toJSON();
+        el.status = status;
+        el.message = 'fail';
+        resolve(el);
       });
-  });
+  }));
+  return Promise.allSettled(linksStatus);
 };
 
-linkStatus();
+linkStatus(toHtmlAndExtractLinks(route))
+  .then((res) => {
+    console.log(res);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
-// const validarLinksStatus = (links) => {
-//   let myPromises = links.map((elem) => new Promise( (resolve) => {   //Iteramos los link con promesa
-//     return fetch(elem.href)                                    //Hacemos una peticion al link y devuelve una promesa
-//           .then((response) => {                                    
-//             if (response.status >= 200 && response.status <= 299){  //Si la respuesta tiene un status entre 200 y 299
-//                   elem.status = response.status,                     //me da la respuesta con el status
-//                   elem.ok = "OK";                                     // Te devuelve ok
-//                   resolve(elem);                                     //resuelve la promesa
-//               } else {
-//                   elem.status = response.status,
-//                   elem.ok = 'FAIL';
-//                   resolve(elem);
-//               }
-//           })
-//           .catch((err) => {                                          //Si la promesa fallo
-//               elem.status = err.status,
-//         elem.ok = 'FAIL';
-//         resolve(elem);
-//       });  
-//   }));
-//   return Promise.all(myPromises)
-// //   .then((res) => {
-//       //console.log(res);
-//       return res;
-//     })
-//     .catch((err)=>{
-//       //console.log(err);
-//       return err;
-//     });
-// };
+module.exports {
+  
+}
