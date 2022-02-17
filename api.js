@@ -4,8 +4,6 @@ const fs = require('fs');
 
 const path = require('path');
 
-const process = require('process');
-
 const marked = require('marked');
 
 // const cheerio = require('cheerio');
@@ -17,8 +15,6 @@ const { JSDOM } = jsdom;
 // const fetch = require('node-fetch');
 
 const axios = require('axios');
-
-const route = process.argv[2];
 
 const routeExists = (routeParameter) => fs.existsSync(routeParameter); 
 
@@ -33,15 +29,6 @@ const readDirectory = (routeParameter) => fs.readdirSync(routeParameter);
 const readExtName = (parameter) => path.extname(parameter);
 
 const convertToAbsolute = (routeParameter, file) => path.resolve(routeParameter, file);
-
-if (routeExists(route)) {
-  console.log('La ruta existe');
-} else {
-  console.log('La ruta no existe');
-  process.exit(0);
-}
-
-absolutePath(route);
 
 const recursiveFunction = (routeParameter) => {
   const arr = [];
@@ -89,28 +76,28 @@ const linkStatus = (arrLinks) => {
     axios.get(el.href)
       .then((response) => {
         const { status } = response;
-        el.status = status;
         el.message = 'ok';
+        el.status = status;
         resolve(el);
       })
-      .catch((error) => {
-        const { status } = error.toJSON();
-        el.status = status;
+      .catch(() => {
         el.message = 'fail';
+        el.status = 404;
         resolve(el);
       });
   }));
   return Promise.allSettled(linksStatus);
 };
 
-linkStatus(toHtmlAndExtractLinks(route))
-  .then((res) => {
-    console.log(res);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+// linkStatus(toHtmlAndExtractLinks(route))
+//   .then((res) => {
+//     console.log(res);
+//   });
 
-module.exports {
-  
-}
+module.exports = {
+  routeExists,
+  absolutePath,
+  recursiveFunction,
+  toHtmlAndExtractLinks,
+  linkStatus,
+};
