@@ -71,7 +71,6 @@ const toHtmlAndExtractLinks = (routeParameter) => {
 };
 
 const linkStatus = (arrLinks) => {
-  console.log(arrLinks);
   const linksStatus = arrLinks.map((el) => new Promise((resolve) => {
     axios.get(el.href)
       .then((response) => {

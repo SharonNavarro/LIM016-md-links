@@ -2,7 +2,10 @@ const process = require('process');
 
 const api = require('./api');
 
-// const route = process.argv[2];
+const path = process.argv[2];
+const options = {
+  validate: false,
+};
 
 const mdLinks = (path, options) => new Promise((resolve, reject) => {
   if (api.routeExists(path)) { 
@@ -30,6 +33,10 @@ const mdLinks = (path, options) => new Promise((resolve, reject) => {
     );
   }
 });
+
+mdLinks(path, options)
+  .then((res) => console.log(res))
+  .catch((err) => console.log(err));
 
 module.exports = {
   mdLinks,
