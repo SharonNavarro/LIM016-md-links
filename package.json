@@ -2,12 +2,16 @@
   "name": "sanm-mdlinks",
   "version": "0.1.0",
   "description": "  Descripcion provisional",
-  "main": "index.js",
+  "bin": {
+    "sanmdlinks": "cli.js"
+  },
+  "main": "../src/cli.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "build": "babel src -d lib"
   },
   "repository": {
     "type": "git",
@@ -20,17 +24,22 @@
   },
   "homepage": "https://github.com/SharonNavarro/LIM016-md-links#readme",
   "devDependencies": {
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.5",
+    "@babel/preset-env": "^7.16.11",
     "@types/node-fetch": "^3.0.3",
+    "babel-jest": "^27.5.1",
     "concurrently": "^7.0.0",
     "eslint": "^8.8.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.4",
-    "http-server": "^14.1.0"
+    "http-server": "^14.1.0",
+    "jest": "^27.5.1"
   },
   "type": "commonjs",
   "dependencies": {
-    "axios": "^0.26.0",
-    "cheerio": "^1.0.0-rc.10",
+    "chalk": "^2.4.1",
+    "figlet": "^1.5.2",
     "jsdom": "^19.0.0",
     "marked": "^4.0.12",
     "node-fetch": "^2.6.7"

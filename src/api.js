@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 /* eslint-disable no-param-reassign */
 const fs = require('fs');
 
@@ -6,15 +5,11 @@ const path = require('path');
 
 const marked = require('marked');
 
-// const cheerio = require('cheerio');
-
 const jsdom = require('jsdom');
 
 const { JSDOM } = jsdom;
 
-// const fetch = require('node-fetch');
-
-const axios = require('axios');
+const fetch = require('node-fetch');
 
 const routeExists = (routeParameter) => fs.existsSync(routeParameter); 
 
@@ -58,7 +53,7 @@ const toHtmlAndExtractLinks = (routeParameter) => {
     const fileToHtml = marked.parse(readFiles);
     const dom = new JSDOM(fileToHtml).window.document.querySelectorAll('a');
     dom.forEach((el) => {
-      if (el.href.slice(0, 5) === 'https') {
+      if (el.href.slice(0, 3) === 'htt') {
         arrDom.push({
           href: el.href,
           text: (el.textContent).slice(0, 50),
@@ -72,26 +67,28 @@ const toHtmlAndExtractLinks = (routeParameter) => {
 
 const linkStatus = (arrLinks) => {
   const linksStatus = arrLinks.map((el) => new Promise((resolve) => {
-    axios.get(el.href)
+    const fetchLink = () => fetch(el.href)
       .then((response) => {
-        const { status } = response;
-        el.message = 'ok';
-        el.status = status;
-        resolve(el);
-      })
-      .catch(() => {
-        el.message = 'fail';
-        el.status = 404;
+        if (response.status >= 200 && response.status < 400) {
+          el.message = 'Ok';
+          el.status = response.status;
+          resolve(el);
+        } else {
+          el.message = 'Fail';
+          el.status = response.status;
+          resolve(el);
+        }
+      }).catch(() => {
+        el.message = 'Fail';
+        el.status = 'Error request';
         resolve(el);
       });
-  }));
-  return Promise.allSettled(linksStatus);
+    fetchLink();
+  })
+  
+  );
+  return Promise.all(linksStatus);
 };
-
-// linkStatus(toHtmlAndExtractLinks(route))
-//   .then((res) => {
-//     console.log(res);
-//   });
 
 module.exports = {
   routeExists,
@@ -99,4 +96,9 @@ module.exports = {
   recursiveFunction,
   toHtmlAndExtractLinks,
   linkStatus,
+  routeDirectory,
+  routeFile,
+  readDirectory,
+  readExtName,
+  convertToAbsolute,
 };

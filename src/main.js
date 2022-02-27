@@ -43,23 +43,23 @@
 // module.exports = Math;
 // exports.add = add;
 
-const obj = {
-  name: 'Holly',
-  edad: 35,
-  papel: 'productor',
-};
+// const obj = {
+//   name: 'Holly',
+//   edad: 35,
+//   papel: 'productor',
+// };
   
-const convertObjectToList = (obj) => {
-  const claves = Object.keys(obj);
-  const arr = claves.map((elm) => {
-    const keyAndValue = [];
-    keyAndValue.push(elm);
-    const x = obj[elm];
-    keyAndValue.push(x);
-    return keyAndValue;
-  });
-  console.log(arr);
-  return arr;
-};
+// const convertObjectToList = (obj) => {
+//   const claves = Object.keys(obj);
+//   const arr = claves.map((elm) => {
+//     const keyAndValue = [];
+//     keyAndValue.push(elm);
+//     const x = obj[elm];
+//     keyAndValue.push(x);
+//     return keyAndValue;
+//   });
+//   console.log(arr);
+//   return arr;
+// };
 
-convertObjectToList(obj);
+// convertObjectToList(obj);
