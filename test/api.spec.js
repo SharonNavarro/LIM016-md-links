@@ -1,8 +1,10 @@
+const path = require('path');
+
 const api = require('../src/api');
 
 describe('routeExists', () => {
   it('deberia devolver true cuando exista la ruta', () => {
-    const result = api.routeExists('./tres.md')
+    const result = api.routeExists(path.join(process.cwd(),'./test', '/tres.md'))
     expect(result).toEqual(true);
   });
 
@@ -13,39 +15,44 @@ describe('routeExists', () => {
 });
 
 describe('absolutePath', () => {
-  it('deberia devolver la ruta en absoluta', () => {
-    const result = api.absolutePath('./tres.md')
-    expect(result).toEqual('C:\\Users\\USUARIO\\Documents\\Laboratoria\\LIM016-md-links\\tres.md');
+  it('deberia devolver la ruta en absoluta si es que la ruta era relativa', () => {
+    const result = api.absolutePath('./test/tres.md')
+    expect(result).toEqual(path.join(process.cwd(),'./test', '/tres.md'));
+  });
+
+  it('deberia devolver la misma ruta si se ingreso una ruta absoluta', () => {
+    const result = api.absolutePath(path.join(process.cwd(),'./test', '/tres.md'))
+    expect(result).toEqual(path.join(process.cwd(),'./test', '/tres.md'));
   });
 });
 
 describe('routeDirectory', () => {
   it('deberia devolver true si la ruta es un directorio', () => {
-    const result = api.routeDirectory('./prueba-1')
+    const result = api.routeDirectory(path.join(process.cwd(),'./test','./prueba-1'))
     expect(result).toEqual(true);
   });
 
   it('deberia devolver false si la ruta no es un directorio', () => {
-    const result = api.routeDirectory('./tres.md')
+    const result = api.routeDirectory(path.join(process.cwd(),'./test','/tres.md'))
     expect(result).toEqual(false);
   });
 });
 
 describe('routeFile', () => {
   it('deberia devolver true si la ruta es un archivo', () => {
-    const result = api.routeFile('./tres.md')
+    const result = api.routeFile(path.join(process.cwd(),'./test','/tres.md'))
     expect(result).toEqual(true);
   });
 
   it('deberia devolver false si la ruta no es un archivo', () => {
-    const result = api.routeFile('./prueba-1')
+    const result = api.routeFile(path.join(process.cwd(),'./test', './prueba-1'))
     expect(result).toEqual(false);
   });
 });
 
 describe('readDirectory', () => {
-  it('deberia devolver true si la ruta es un archivo', () => {
-    const result = api.readDirectory('./prueba-1')
+  it('deberia poder leer el directorio', () => {
+    const result = api.readDirectory(path.join(process.cwd(),'./test', './prueba-1'))
     expect(result).toEqual(["carpeta1", "carpeta2", "dos.md", "texto.txt"]);
   });
 });
@@ -59,27 +66,27 @@ describe('readExtName', () => {
 
 describe('recursiveFunction', () => {
   it('deberia devolver un arreglo de archivos .md', () => {
-    const result = api.recursiveFunction('./prueba-1')
+    const result = api.recursiveFunction(path.join(process.cwd(),'./test','./prueba-1'))
     expect(result).toEqual([
-      'C:\\Users\\USUARIO\\Documents\\Laboratoria\\LIM016-md-links\\prueba-1\\carpeta1\\tres.md',
-      'C:\\Users\\USUARIO\\Documents\\Laboratoria\\LIM016-md-links\\prueba-1\\dos.md'
+      (path.join(process.cwd(),'./test','prueba-1', 'carpeta1', '/tres.md')),
+      (path.join(process.cwd(),'./test', 'prueba-1', '/dos.md'))
     ]);
   });
 });
 
 describe('toHtmlAndExtractLinks', () => {
   it('deberia devolver un arreglo de objetos con las propiedades href, text, file', () => {
-    const result = api.toHtmlAndExtractLinks('./tres.md')
+    const result = api.toHtmlAndExtractLinks(path.join(process.cwd(),'./test','./tres.md'))
     expect(result).toEqual([
       {
         href: 'https://docs.npmjs.com/cli/install',
         text: 'docs oficiales de npm install acá',
-        file: './tres.md'
+        file: 'C:\\Users\\USUARIO\\Documents\\Laboratoria\\LIM016-md-links\\test\\tres.md',
       },
       {
         href: 'https://github.com/Laboratoria/course-parser',
         text: 'course-parser',
-        file: './tres.md'
+        file: 'C:\\Users\\USUARIO\\Documents\\Laboratoria\\LIM016-md-links\\test\\tres.md',
       }
     ]);
   });
@@ -88,13 +95,13 @@ describe('toHtmlAndExtractLinks', () => {
 const arrayLink = [{
   href: 'https://developer.mozilla.org/es/docs/Web/JavaScript/Guide/Functions',
   text: 'Funciones Anónimas',
-  file: 'C:\\Users\\SHARON\\md-links\\src\\README.md'
+  file: 'C:\\Users\\SHARON\\LIM016-md-links\\src\\README.md'
 }];
 
 const arrayLinkResolve = [{
   'href': 'https://developer.mozilla.org/es/docs/Web/JavaScript/Guide/Functions',
   'text': 'Funciones Anónimas',
-  'file': 'C:\\Users\\SHARON\\md-links\\src\\README.md',
+  'file': 'C:\\Users\\SHARON\\LIM016-md-links\\src\\README.md',
   'message': 'Ok',
   'status': 200
 }];
@@ -111,13 +118,13 @@ describe('linkStatus', () => {
 const arrayLinkBroken = [{
   href: 'https://developeron.mozilla.org',
   text: 'no existe',
-  file: 'C:\\Users\\SHARON\\md-links\\src\\README.md'
+  file: 'C:\\Users\\SHARON\\LIM016-md-links\\src\\README.md'
 }]
 
 const arrayLinkBrokenErrorRequest = [{
   'href': 'https://developeron.mozilla.org',
   'text': 'no existe',
-  'file': 'C:\\Users\\SHARON\\md-links\\src\\README.md',
+  'file': 'C:\\Users\\SHARON\\LIM016-md-links\\src\\README.md',
   'message': 'Fail',
   'status': 'Error request'
 }];
@@ -134,13 +141,13 @@ describe('linkStatus', () => {
 const anotherArrayLinkBroken = [{
   href: 'https://medium.com/netscape/a-guide-to-create-a-nodejs-command-line-package-c2166ad0452e',
   text: 'Linea de comando CLI',
-  file: 'C:\\Users\\SHARON\\md-links\\src\\README.md'
+  file: 'C:\\Users\\SHARON\\LIM016-md-links\\src\\README.md'
 }]
 
 const anotherArrayLinkBrokenStatusCode = [{
   'href': 'https://medium.com/netscape/a-guide-to-create-a-nodejs-command-line-package-c2166ad0452e',
   'text': 'Linea de comando CLI',
-  'file': 'C:\\Users\\SHARON\\md-links\\src\\README.md',
+  'file': 'C:\\Users\\SHARON\\LIM016-md-links\\src\\README.md',
   'message': 'Fail',
   'status': 503,
 }];

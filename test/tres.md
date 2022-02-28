@@ -1,4 +1,5 @@
 // Archivo md de prueba
+* [1. Preámbulo](#1-preámbulo)
 Para que el módulo sea instalable desde GitHub solo tiene que:
 
 * Estar en un repo público de GitHub

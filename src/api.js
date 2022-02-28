@@ -31,7 +31,7 @@ const recursiveFunction = (routeParameter) => {
   let onlyMd = [];
   const startingPoint = (routeParameter) => {
     if (routeFile(routeParameter)) {
-      arr.push(routeParameter);
+      arr.push(path.resolve(routeParameter));
     } else {
       readDirectory(routeParameter).map((file) => {
         pathChildren = convertToAbsolute(routeParameter, file);

@@ -6,7 +6,6 @@ const mdLinks = (path, options) => new Promise((resolve, reject) => {
     if ((api.recursiveFunction(path).length) !== 0) {
       const arrLinks = api.toHtmlAndExtractLinks(path);
       if (options.validate === true) {
-        api.linkStatus(arrLinks).then((res) => console.log(res));
         api.linkStatus(arrLinks)
         .then((res) => resolve(res));
       } else {
