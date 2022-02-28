@@ -1,11 +1,11 @@
 {
   "name": "sanm-mdlinks",
-  "version": "0.1.0",
-  "description": "  Descripcion provisional",
+  "version": "1.0.0",
+  "description": "Library that allows you to see the status of your links contained in your markdown files along with some statistics. Has support for both files and directories",
   "bin": {
     "sanmdlinks": "cli.js"
   },
-  "main": "../src/cli.js",
+  "main": "cli.js",
   "directories": {
     "test": "test"
   },
@@ -20,7 +20,7 @@
   "author": "Sharon Navarro",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/SharonNavarro/LIM016-md-links/issues"
+    "url": "https://github.com/SharonNavarro/LIM016-md-links"
   },
   "homepage": "https://github.com/SharonNavarro/LIM016-md-links#readme",
   "devDependencies": {
