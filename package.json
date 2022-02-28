@@ -5,6 +5,9 @@
   "bin": {
     "sanmdlinks": "cli.js"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "cli.js",
   "directories": {
     "test": "test"
