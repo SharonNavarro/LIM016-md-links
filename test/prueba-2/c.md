@@ -8,5 +8,5 @@ Laboratoria/course-parser`.
 
 No dudes en consultar a tus compañeras, coaches y/o el [foro comunidad](http://community.laboratoria.la/c/js)
 
-No dudes en consultar a tus compañeras, coaches y/o el [foro-comunidad](http://community.laboratoria.la/c/js)
+No dudes en consultar a tus compañeras, coaches y/o el [foro-comunidad](https://developeron.mozilla.org)
 
