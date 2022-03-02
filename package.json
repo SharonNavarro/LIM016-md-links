@@ -1,6 +1,6 @@
 {
-  "name": "@sharonavarro/md-links",
-  "version": "1.0.1",
+  "name": "sanm-mdlinks",
+  "version": "1.0.0",
   "description": "Library that allows you to see the status of your links contained in your markdown files along with some statistics. Has support for both files and directories",
   "bin": {
     "sanmdlinks": "cli.js"
